@@ -1,7 +1,7 @@
 Python-MySQLdb-Test-App
 =======================
 
-First Python Test Script utilizing MySQLdb  as database connector to extract and manipulate webs sites data.
+My First Python Test Script utilizing MySQLdb  as database connector to extract and manipulate webs sites data.
 
 The purpose of this script is to build an app which satisfies the following requirements:-
 - read a list of URL's (CSV) provided in the the attached file, urls.txt and a list of tags (CSV) provided in the attached file tags.txt. Use appropriate data structures, like dictionaries tuples etc.
