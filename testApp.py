@@ -1,0 +1,80 @@
+__author__ = 'kaji'
+
+from urllib import urlopen
+import MySQLdb
+import MySQLdb.cursors
+import sys
+
+# Open database connection
+#db = MySQLdb.connect("localhost","root","yolmo","test" )
+db = MySQLdb.connect("localhost","root","yolmo","test" )
+
+# prepare a cursor object using cursor() method
+cursor = db.cursor(MySQLdb.cursors.DictCursor)
+
+def createList(filename):
+    try:
+        f = open(filename).read()
+        list = f.split(',')
+        print " List for %s: %s" % (filename, list)
+        return list
+    except:
+        #print e
+        print "File '%s' not found! Exiting !!!" % filename
+        sys.exit(1)
+
+print #blank line
+
+URL_list = createList("urls.txt")
+tags_List = createList("tags.txt")
+
+text = " \n "
+try:
+    for eachURL in URL_list:
+        html = urlopen(eachURL).read()
+        text = text + html
+    #print text
+except:
+    print "Error Processing the URL List"
+
+def ins(tag1, counter):
+    try:
+       # Execute the SQL command
+       cursor.execute("insert into counter_tbl(tag, count) values (%s,%s)", (tag1, counter))
+       # Commit your changes in the database
+       db.commit()
+       print "Data inserted into the Database successfully for '%s'" % tag1
+    except Exception, e:
+       # Rollback in case there is any error
+        db.rollback()
+        print e
+        print "Error: Data cannot be inserted for '%s'" % tag1
+
+
+###### Delete all records and reset the AUTO_INCREMENT COUNTER ######
+cursor.execute("truncate table counter_tbl")
+print
+for eachTag in tags_List:
+    ins(eachTag, text.count(eachTag))
+
+print "\nList of tags and their count of occurences:"
+cursor.execute("select tag, count from counter_tbl")
+
+# # Fetch only one row of data at a time
+# counter = cursor.fetchone()
+# print counter['tag'], counter['count']
+
+# Fetch more than one rows of data at a time
+counter = cursor.fetchall()
+desc = cursor.description
+print "\nData queried from the Database:"
+print "*" *31
+print "%-17s  ==> %8s" % (desc[0][0], desc[1][0])
+print "*" *31
+for eachRow in counter:
+    print "%-17s  ==> %8s" % (eachRow['tag'], eachRow['count'])
+    #print eachRow
+
+db.commit()
+db.close()
+

@@ -1,0 +1,6 @@
+CREATE TABLE counter_tbl(
+	id INT(5) NOT NULL AUTO_INCREMENT,
+	tag VARCHAR(30) NOT NULL,
+	count INT(5) NOT NULL,
+	PRIMARY KEY(id)
+	);
